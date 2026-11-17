@@ -115,13 +115,19 @@ the Docker image. A full local dry run requires a Docker-compatible engine.
 - The existing application is not modified to trust arbitrary proxy headers.
   Verify observed client IP behavior before enabling IP-based restrictions.
 
-## Current preparation status
+## Verification
 
-Worker helper tests (4), Wrangler Worker-only dry run, the full Docker image
-build, and PostgreSQL/Redis TLS connection checks passed on 2026-11-17.
-First deployment stopped at the Containers API because Workers Paid was not
-active. First boot, admin login, and model requests remain unverified until
-that platform requirement is resolved.
+Local release-wrapper/runtime tests (6), Wrangler dry run, the full Docker
+image build, and PostgreSQL/Redis TLS connection checks passed on 2026-11-17.
+After Workers Paid activation, 304 migrations created 105 public tables and
+one administrator. Live health, setup status, public settings, administrator
+login, and rejection of unauthenticated model requests passed.
+
+The application requires its own operator agreement on first administrator
+use. Dashboard APIs return 423 until the operator accepts that agreement.
+Upstream model accounts must then be configured before inference/SSE testing.
+One observed cold start took about 118 seconds; requests to a sleeping instance
+can therefore require a longer client timeout or a later retry.
 
 References (checked 2026-11-17):
 
