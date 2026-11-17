@@ -15,6 +15,21 @@ const secrets = Object.fromEntries(requiredSecrets.map((name) => [name, parsed[n
 if (process.argv.includes('--check-only')) {
   console.log(`Validated ${requiredSecrets.length} required runtime secrets; values are not displayed.`);
 } else {
+  // Wrangler activates the Worker before provisioning the container. Check
+  // entitlement first so a missing paid plan cannot replace a working version
+  // with a Worker whose container is unavailable.
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!apiToken) throw new Error('Missing CLOUDFLARE_API_TOKEN for Containers preflight');
+  const accountId = 'e090d615d06b656253822b7e79ea6b6c';
+  const preflight = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/containers/me`, {
+    headers: { authorization: `Bearer ${apiToken}` },
+    signal: AbortSignal.timeout(30_000),
+  });
+  const result = await preflight.json().catch(() => null);
+  if (!preflight.ok || result?.success !== true) {
+    throw new Error(`Containers preflight failed (HTTP ${preflight.status}). Check Workers Paid activation and build token Containers permissions. No deployment was started.`);
+  }
+  console.log('Containers access preflight passed.');
   const directory = mkdtempSync(join(tmpdir(), 'sub2api-deploy-'));
   const path = join(directory, 'runtime-secrets.json');
   try {

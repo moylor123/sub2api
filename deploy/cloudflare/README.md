@@ -61,6 +61,19 @@ context and removed after deployment. The values are never written to source
 files, passed as CLI arguments, or printed by the wrapper. Runtime credentials
 can subsequently be managed directly through Cloudflare Worker Secrets.
 
+The wrapper checks Containers access before building or deploying. Workers Paid
+must already be active. Wrangler can activate the Worker before container
+provisioning finishes, so a failed container release can temporarily return 503.
+After the Durable Object namespace exists, an old static-only Worker cannot be
+rolled back directly unless it preserves the live Durable Object export. Do not
+delete the namespace as a rollback shortcut.
+
+For temporary frontend recovery while Containers is unavailable, build the
+frontend with pnpm 9 and deploy `wrangler.frontend-recovery.jsonc`. This preserves
+the Durable Object export, serves the compiled frontend, and returns explicit
+503 JSON for backend routes. It does not make login or model calls functional.
+Restore `node deploy/cloudflare/deploy.mjs` after Workers Paid is active.
+
 Cloudflare may require a build token with Containers/registry and Durable
 Object permissions in addition to the original static Worker deploy token.
 Do not widen a token until the required permissions have been reviewed.
@@ -96,10 +109,11 @@ the Docker image. A full local dry run requires a Docker-compatible engine.
 
 ## Current preparation status
 
-Worker helper tests (4) and Wrangler Worker-only dry run passed locally.
-The full container image, managed database connection, first boot, login, and
-model requests still require a live deployment and are not validated by those
-local checks.
+Worker helper tests (4), Wrangler Worker-only dry run, the full Docker image
+build, and PostgreSQL/Redis TLS connection checks passed on 2026-11-17.
+First deployment stopped at the Containers API because Workers Paid was not
+active. First boot, admin login, and model requests remain unverified until
+that platform requirement is resolved.
 
 References (checked 2026-11-17):
 
