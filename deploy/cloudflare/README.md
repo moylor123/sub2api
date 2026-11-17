@@ -74,6 +74,12 @@ the Durable Object export, serves the compiled frontend, and returns explicit
 503 JSON for backend routes. It does not make login or model calls functional.
 Restore `node deploy/cloudflare/deploy.mjs` after Workers Paid is active.
 
+For Worker/runtime-environment-only changes after a successful container
+release, use `node deploy/cloudflare/deploy.mjs --worker-only`. This preserves
+the deployed image and container metadata. Restore the normal deploy command
+for application or Dockerfile changes. Existing running containers need a
+restart before changed environment variables apply.
+
 Cloudflare may require a build token with Containers/registry and Durable
 Object permissions in addition to the original static Worker deploy token.
 Do not widen a token until the required permissions have been reviewed.
@@ -95,6 +101,8 @@ the Docker image. A full local dry run requires a Docker-compatible engine.
   files, database backups, or generated image files surviving a restart.
 - AUTO_SETUP reconstructs local configuration on each fresh boot and skips
   admin creation if the database already has an administrator.
+- Initial database migration is allowed 600 seconds because the upstream
+  60-second default can time out against remote managed PostgreSQL.
 - The default idle timeout is one hour. Background jobs pause while the
   container is asleep. Continuous background operation needs a separate
   availability and cost decision.

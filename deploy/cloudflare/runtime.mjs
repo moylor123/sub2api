@@ -20,6 +20,8 @@ export function containerEnvironment(env) {
 
   return {
     AUTO_SETUP: 'true', SERVER_HOST: '0.0.0.0', SERVER_PORT: '8080',
+    // Remote PostgreSQL needs more than the upstream 60-second migration limit.
+    SETUP_MIGRATION_TIMEOUT_SECONDS: '600',
     SERVER_MODE: 'release', RUN_MODE: 'standard', TZ: 'Asia/Shanghai',
     // Connections are deliberately bounded for small managed database plans.
     DATABASE_MAX_OPEN_CONNS: '10', DATABASE_MAX_IDLE_CONNS: '2',

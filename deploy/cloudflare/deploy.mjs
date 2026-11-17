@@ -39,6 +39,7 @@ if (process.argv.includes('--check-only')) {
     const result = spawnSync('npx', [
       '--yes', 'wrangler@4.163.0', 'deploy', '--config', 'wrangler.containers.jsonc',
       '--secrets-file', path,
+      ...(process.argv.includes('--worker-only') ? ['--containers-rollout=none'] : []),
     ], { stdio: 'inherit', env: childEnv, shell: false });
     if (result.error) throw result.error;
     process.exitCode = result.status ?? 1;

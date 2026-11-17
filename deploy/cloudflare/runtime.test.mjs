@@ -23,6 +23,7 @@ test('persistent secrets survive restarts and build credentials stay outside con
   assert.equal(config.JWT_SECRET, env.JWT_SECRET);
   assert.equal(config.TOTP_ENCRYPTION_KEY, env.TOTP_ENCRYPTION_KEY);
   assert.equal(config.AUTO_SETUP, 'true');
+  assert.equal(config.SETUP_MIGRATION_TIMEOUT_SECONDS, '600');
   assert.equal(config.DATABASE_SSLMODE, 'verify-full');
   assert.equal(config.REDIS_ENABLE_TLS, 'true');
   assert.equal(config.CLOUDFLARE_API_TOKEN, undefined);
