@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "api",
+  "main": "deploy/cloudflare/worker.mjs",
+  "compatibility_date": "2026-11-16",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "api.codex666.net", "custom_domain": true }],
+  "containers": [{
+    "class_name": "Sub2APIContainer",
+    "image": "./Dockerfile",
+    "instance_type": "basic",
+    "max_instances": 1
+  }],
+  "durable_objects": {
+    "bindings": [{ "name": "SUB2API", "class_name": "Sub2APIContainer" }]
+  },
+  "exports": { "Sub2APIContainer": { "type": "durable-object", "storage": "sqlite" } },
+  "observability": { "enabled": true },
+  "vars": {
+    "PUBLIC_ORIGIN": "https://api.codex666.net",
+    "DATABASE_PORT": "5432",
+    "DATABASE_SSLMODE": "verify-full",
+    "REDIS_PORT": "6379",
+    "REDIS_USERNAME": "default",
+    "REDIS_ENABLE_TLS": "true",
+    "REDIS_DB": "0"
+  }
+}
