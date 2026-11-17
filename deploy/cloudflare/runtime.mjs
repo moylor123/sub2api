@@ -30,7 +30,7 @@ export function containerEnvironment(env) {
     DATABASE_PORT: env.DATABASE_PORT ?? '5432', DATABASE_SSLMODE: env.DATABASE_SSLMODE ?? 'verify-full',
     REDIS_PORT: env.REDIS_PORT ?? '6379', REDIS_USERNAME: env.REDIS_USERNAME ?? 'default',
     REDIS_ENABLE_TLS: 'true', REDIS_DB: env.REDIS_DB ?? '0',
-    MCP_PUBLIC_URL: env.PUBLIC_ORIGIN ?? 'https://api.codex666.net',
+    MCP_PUBLIC_URL: new URL('/api/v1/mcp', env.PUBLIC_ORIGIN ?? 'https://api.codex666.net').href,
     ...Object.fromEntries(requiredSecrets.map((key) => [key, env[key]])),
   };
 }
